@@ -105,6 +105,26 @@
             ((a6le i3le ta6le ti3le) "./libduckdb.so")
             (else "./libduckdb.so"))))
 
+  ;; helper
+  ; (make-ftype-null int)
+  (define-syntax make-ftype-null
+    (syntax-rules ()
+      ((_ type)
+        (make-ftype-pointer type #x00000000))))
+
+  ; (define-callback make-on-close (void*) void)
+  ; (define on-close (make-on-close (lambda (p) (printf "~a\n" p))))
+  (define-syntax define-callback
+    (lambda (x)
+      (syntax-case x ()
+        [(_ name args ret)
+        #'(define name
+            (lambda (p)
+              (let ([code (foreign-callable __collect_safe p args ret)])
+                (lock-object code)
+                (foreign-callable-entry-point code))))])))
+
+  (alias define-fn define-callback)
   ;; const
   ;
   (define DUCKDB_TYPE_INVALID 0)
@@ -188,6 +208,7 @@
   ; idx_t => unsigned-64
   ; duckdb_delete_callback_t
   ; duckdb_task_state => viod*
+  (define-ftype duckdb_task_state void*)
   (define-ftype duckdb_date (struct [days integer-32]))
   (define-ftype duckdb_date_struct
     (struct
@@ -296,12 +317,25 @@
   (define-ftype duckdb_data_chunk (struct [__dtck void*]))
   (define-ftype duckdb_value (struct [__val void*]))
   ;; Table function types
+  (define-ftype duckdb_table_function void*)
+  (define-ftype duckdb_bind_info void*)
+  (define-ftype duckdb_init_info void*)
+  (define-ftype duckdb_function_info void*)
+  ; The bind function of the table function.
+  ; typedef void (*duckdb_table_function_bind_t)(duckdb_bind_info info)
+  (define-callback make-duckdb-table-function-bind-t ((& duckdb_bind_info)) void)
+  ; The (possibly thread-local) init function of the table function.
+  ; typedef void (*duckdb_table_function_init_t)(duckdb_init_info info);
+  (define-callback make-duckdb-table-function-init-t ((& duckdb_bind_info)) void)
+  ; The main function of the table function.
+  ; typedef void (*duckdb_table_function_t)(duckdb_function_info info, duckdb_data_chunk output);
+  (define-callback make-duckdb-table-function-t ((& duckdb_bind_info) (& duckdb_data_chunk)) void)
 
   ;; Arrow-related types
-(define-ftype duckdb_arrow (struct [__arrw void*]))
-(define-ftype duckdb_arrow_stream (struct [__arrwstr void*]))
-(define-ftype duckdb_arrow_schema (struct [__arrs void*]))
-(define-ftype duckdb_arrow_array (struct [__arra void*]))  
+  (define-ftype duckdb_arrow (struct [__arrw void*]))
+  (define-ftype duckdb_arrow_stream (struct [__arrwstr void*]))
+  (define-ftype duckdb_arrow_schema (struct [__arrs void*]))
+  (define-ftype duckdb_arrow_array (struct [__arra void*]))  
       
   ; function
   (define duckdb-open
@@ -387,8 +421,146 @@
   (define duckdb-value-varchar
     (let ([f (foreign-procedure "duckdb_value_varchar" ((* duckdb_result) unsigned-64 unsigned-64) string)])
       (lambda (res i j) (f res i j))))
+  ;; Replacement Scans
+(define duckdb-add-replacement-scan
+  (let ([f (foreign-procedure "duckdb_add_replacement_scan" ((& duckdb_database) void* void*) void)])
+    (lambda (db replacement extra-data delete-callback) (f db replacement extra-data delete-callback))))
+(define duckdb-replacement-scan-set-function-name
+  (let ([f (foreign-procedure "duckdb_replacement_scan_set_function_name" ((& duckdb_replacement_scan_info) string) void)])
+    (lambda (info function-name) (f info function-name))))
+(define duckdb-replacement-scan-add-parameter
+  (let ([f (foreign-procedure "duckdb_replacement_scan_add_parameter" ((& duckdb_replacement_scan_info) (& duckdb_value)) void)])
+    (lambda (info parameter) (f info parameter))))
+(define duckdb-replacement-scan-set-error
+  (let ([f (foreign-procedure "duckdb_replacement_scan_set_error" ((& duckdb_replacement_scan_info) string) void)])
+    (lambda (info error) (f info error))))
+
+  ;; Appender
+  (define duckdb-appender-create
+    (let ([f (foreign-procedure "duckdb_appender_create" ((& duckdb_connection) string string (* duckdb_appender)) unsigned-int)])
+      (lambda (con schema table out-appender) (f con schema table out-appender))))
+  (define duckdb-appender-column-count
+    (let ([f (foreign-procedure "duckdb_appender_column_count" ((& duckdb_appender)) unsigned-64)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-column-type
+    (let ([f (foreign-procedure "duckdb_appender_column_type" ((& duckdb_appender)  unsigned-64) (* duckdb_logical_type))])
+      (lambda (appender col-idx) (f appender col-idx))))
+  (define duckdb-appender-error
+    (let ([f (foreign-procedure "duckdb_appender_error" ((& duckdb_appender)) string)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-flush
+    (let ([f (foreign-procedure "duckdb_appender_flush" ((& duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-close
+    (let ([f (foreign-procedure "duckdb_appender_close" ((& duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-destroy
+    (let ([f (foreign-procedure "duckdb_appender_destroy" ((* duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-begin-row
+    (let ([f (foreign-procedure "duckdb_appender_begin_row" ((& duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-appender-end-row
+    (let ([f (foreign-procedure "duckdb_appender_end_row" ((& duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-append-bool
+    (let ([f (foreign-procedure "duckdb_append_bool" ((& duckdb_appender) boolean) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-int8
+    (let ([f (foreign-procedure "duckdb_append_int8" ((& duckdb_appender) integer-8) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-int16
+    (let ([f (foreign-procedure "duckdb_append_int16" ((& duckdb_appender) integer-16) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-int32
+    (let ([f (foreign-procedure "duckdb_append_int32" ((& duckdb_appender) integer-32) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-int64
+    (let ([f (foreign-procedure "duckdb_append_int64" ((& duckdb_appender) integer-64) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-hugeint
+    (let ([f (foreign-procedure "duckdb_append_hugeint" ((& duckdb_appender) (& duckdb_hugeint)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-uint8
+    (let ([f (foreign-procedure "duckdb_append_uint8" ((& duckdb_appender) unsigned-8) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-uint16
+    (let ([f (foreign-procedure "duckdb_append_uint16" ((& duckdb_appender) unsigned-16) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-uint32
+    (let ([f (foreign-procedure "duckdb_append_uint32" ((& duckdb_appender) unsigned-32) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-uint64
+    (let ([f (foreign-procedure "duckdb_append_uint64" ((& duckdb_appender) unsigned-64) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-uhugeint
+    (let ([f (foreign-procedure "duckdb_append_uhugeint" ((& duckdb_appender) (& duckdb_uhugeint)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-float
+    (let ([f (foreign-procedure "duckdb_append_float" ((& duckdb_appender) float) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-double
+    (let ([f (foreign-procedure "duckdb_append_double" ((& duckdb_appender) double) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-date
+    (let ([f (foreign-procedure "duckdb_append_date" ((& duckdb_appender) (& duckdb_date)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-time
+    (let ([f (foreign-procedure "duckdb_append_time" ((& duckdb_appender) (& duckdb_time)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-timestamp
+    (let ([f (foreign-procedure "duckdb_append_timestamp" ((& duckdb_appender) (& duckdb_timestamp)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-interval
+    (let ([f (foreign-procedure "duckdb_append_interval" ((& duckdb_appender) (& duckdb_interval)) unsigned-int)])
+      (lambda (appender value) (f appender value))))
+  (define duckdb-append-varchar
+    (let ([f (foreign-procedure "duckdb_append_varchar" ((& duckdb_appender) string) unsigned-int)])
+      (lambda (appender val) (f appender val))))
+  (define duckdb-append-varchar-length
+    (let ([f (foreign-procedure "duckdb_append_varchar_length" ((& duckdb_appender) string unsigned-64) unsigned-int)])
+      (lambda (appender val length) (f appender val length))))
+  (define duckdb-append-blob
+    (let ([f (foreign-procedure "duckdb_append_blob" ((& duckdb_appender) void* unsigned-64) unsigned-int)])
+      (lambda (appender data length) (f appender data length))))
+  (define duckdb-append-null
+    (let ([f (foreign-procedure "duckdb_append_null" ((& duckdb_appender)) unsigned-int)])
+      (lambda (appender) (f appender))))
+  (define duckdb-append-data-chunk
+    (let ([f (foreign-procedure "duckdb_append_data_chunk" ((& duckdb_appender) (& duckdb_data_chunk)) unsigned-int)])
+      (lambda (appender chunk) (f appender chunk))))
+
+  ;; Arrow Interface (DEPRECATION)
+
+  ;; Threading Information
+  (define duckdb-execute-tasks
+    (let ([f (foreign-procedure "duckdb_execute_tasks" ((& duckdb_database) unsigned-64) void)])
+      (lambda (db max-tasks) (f db max-tasks))))
+  (define duckdb-create-task-state
+    (let ([f (foreign-procedure "duckdb_create_task_state" ((& duckdb_database)) (* duckdb_task_state))])
+      (lambda (db) (f db))))
+  (define duckdb-execute-tasks-state
+    (let ([f (foreign-procedure "duckdb_execute_tasks" ((& duckdb_task_state)) void)])
+      (lambda (state) (f state))))
+  (define duckdb-execute-n-tasks-state
+    (let ([f (foreign-procedure "duckdb_execute_n_tasks_state" ((& duckdb_task_state) unsigned-64) unsigned-64)])
+      (lambda (state max-tasks) (f state max-tasks))))
+  (define duckdb-finish-execution
+    (let ([f (foreign-procedure "duckdb_finish_execution" ((& duckdb_task_state)) void)])
+      (lambda (state) (f state))))
+  (define duckdb-task-state-is-finished
+    (let ([f (foreign-procedure "duckdb_task_state_is_finished" ((& duckdb_task_state)) boolean)])
+      (lambda (state) (f state))))
+  (define duckdb-destroy-task-state
+    (let ([f (foreign-procedure "duckdb_destroy_task_state" ((& duckdb_task_state)) void)])
+      (lambda (state) (f state))))
+  (define duckdb_execution_is_finished
+    (let ([f (foreign-procedure "duckdb_execution_is_finished" ((& duckdb_connection)) void)])
+      (lambda (con) (f con))))
   
-
-
+  ;; Streaming Result Interface
+  (define duckdb-fetch-chunk
+    (let ([f (foreign-procedure "duckdb_fetch_chunk" ((& duckdb_result)) (* duckdb_data_chunk))])
+      (lambda (res) (f res))))
 
   )

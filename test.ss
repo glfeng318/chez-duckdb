@@ -1,7 +1,5 @@
 (import (chez-duckdb))
 
-(printf "~a\n" 1)
-
 (define db (make-ftype-pointer duckdb_database (foreign-alloc (ftype-sizeof duckdb_database))))
 (define con (make-ftype-pointer duckdb_connection (foreign-alloc (ftype-sizeof duckdb_connection))))
 (define res (make-ftype-pointer duckdb_result (foreign-alloc (ftype-sizeof duckdb_result))))
@@ -24,11 +22,11 @@
 (define n-column (duckdb-column-count res))
 (define n-row (duckdb-row-count res))
 
-(printf "~a columns ~a rows\n" n-column n-row)
+(printf "~a columns ~a rows\n\n" n-column n-row)
 
-(printf "~a\n" (map (lambda (i) (duckdb-column-name res i)) (iota n-column)))
+(define columns (map (lambda (i) (duckdb-column-name res i)) (iota n-column)))
 
-(for-each (lambda (i) (printf "~a\t" (duckdb-column-name res i))) (iota n-column))
+(for-each (lambda (col) (printf "~a\t" col)) columns)
 (printf "\n")
 
 (for-each
