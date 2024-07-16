@@ -331,11 +331,13 @@
   ; typedef void (*duckdb_table_function_t)(duckdb_function_info info, duckdb_data_chunk output);
   (define-callback make-duckdb-table-function-t ((& duckdb_bind_info) (& duckdb_data_chunk)) void)
 
+  ;; Replacement scan types
+  (define-ftype duckdb_replacement_scan_info void*)
+  ; A replacement scan function that can be added to a database.
+  ; typedef void (*duckdb_replacement_callback_t)(duckdb_replacement_scan_info info, const char *table_name, void *data);
+  (define-callback make-duckdb-replacement-callback-t ((& duckdb_replacement_scan_info) string void*) void)
+
   ;; Arrow-related types
-  (define-ftype duckdb_arrow (struct [__arrw void*]))
-  (define-ftype duckdb_arrow_stream (struct [__arrwstr void*]))
-  (define-ftype duckdb_arrow_schema (struct [__arrs void*]))
-  (define-ftype duckdb_arrow_array (struct [__arra void*]))  
       
   ; function
   (define duckdb-open
@@ -422,18 +424,18 @@
     (let ([f (foreign-procedure "duckdb_value_varchar" ((* duckdb_result) unsigned-64 unsigned-64) string)])
       (lambda (res i j) (f res i j))))
   ;; Replacement Scans
-(define duckdb-add-replacement-scan
-  (let ([f (foreign-procedure "duckdb_add_replacement_scan" ((& duckdb_database) void* void*) void)])
-    (lambda (db replacement extra-data delete-callback) (f db replacement extra-data delete-callback))))
-(define duckdb-replacement-scan-set-function-name
-  (let ([f (foreign-procedure "duckdb_replacement_scan_set_function_name" ((& duckdb_replacement_scan_info) string) void)])
-    (lambda (info function-name) (f info function-name))))
-(define duckdb-replacement-scan-add-parameter
-  (let ([f (foreign-procedure "duckdb_replacement_scan_add_parameter" ((& duckdb_replacement_scan_info) (& duckdb_value)) void)])
-    (lambda (info parameter) (f info parameter))))
-(define duckdb-replacement-scan-set-error
-  (let ([f (foreign-procedure "duckdb_replacement_scan_set_error" ((& duckdb_replacement_scan_info) string) void)])
-    (lambda (info error) (f info error))))
+  (define duckdb-add-replacement-scan
+    (let ([f (foreign-procedure "duckdb_add_replacement_scan" ((& duckdb_database) void* void* void*) void)])
+      (lambda (db replacement extra-data delete-callback) (f db replacement extra-data delete-callback))))
+  (define duckdb-replacement-scan-set-function-name
+    (let ([f (foreign-procedure "duckdb_replacement_scan_set_function_name" ((& duckdb_replacement_scan_info) string) void)])
+      (lambda (info function-name) (f info function-name))))
+  (define duckdb-replacement-scan-add-parameter
+    (let ([f (foreign-procedure "duckdb_replacement_scan_add_parameter" ((& duckdb_replacement_scan_info) (& duckdb_value)) void)])
+      (lambda (info parameter) (f info parameter))))
+  (define duckdb-replacement-scan-set-error
+    (let ([f (foreign-procedure "duckdb_replacement_scan_set_error" ((& duckdb_replacement_scan_info) string) void)])
+      (lambda (info error) (f info error))))
 
   ;; Appender
   (define duckdb-appender-create
