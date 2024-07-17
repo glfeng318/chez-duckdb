@@ -1,10 +1,8 @@
 (import (chez-duckdb))
 
-(define db (make-ftype-pointer duckdb_database (foreign-alloc (ftype-sizeof duckdb_database))))
-(define con (make-ftype-pointer duckdb_connection (foreign-alloc (ftype-sizeof duckdb_connection))))
-(define res (make-ftype-pointer duckdb_result (foreign-alloc (ftype-sizeof duckdb_result))))
-
-(printf "duckdb version: ~a\n" (duckdb-library-version))
+(define db (new duckdb_database))
+(define con (new duckdb_connection))
+(define res (new duckdb_result))
 
 (assert (= 0 (duckdb-open "./test.duckdb" db)))
 (assert (= 0 (duckdb-connect db con)))

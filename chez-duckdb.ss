@@ -95,6 +95,12 @@
     duckdb-row-count
 
     duckdb-value-varchar
+
+    ;;
+    make-ftype-null
+    define-callback
+    define-fn
+    new
     )
   (import (chezscheme))
 
@@ -104,7 +110,7 @@
             ((a6osx i3osx ta6osx ti3osx arm64osx tarm64osx) "./libduckdb.dylib")
             ((a6le i3le ta6le ti3le) "./libduckdb.so")
             (else "./libduckdb.so"))))
-
+  
   ;; helper
   ; (make-ftype-null int)
   (define-syntax make-ftype-null
@@ -125,6 +131,12 @@
                 (foreign-callable-entry-point code))))])))
 
   (alias define-fn define-callback)
+
+  (define-syntax new
+    (syntax-rules ()
+      ((_ ftype)
+        (make-ftype-pointer ftype (foreign-alloc (ftype-sizeof ftype))))))
+  
   ;; const
   ;
   (define DUCKDB_TYPE_INVALID 0)
@@ -358,13 +370,13 @@
       (lambda (db con) (f db con))))
 
   (define duckdb-interrupt
-    (let ([f (foreign-procedure "duckdb_interrupt" ((* duckdb_connection)) int)])
+    (let ([f (foreign-procedure "duckdb_interrupt" ((& duckdb_connection)) int)])
       (lambda (con) (f con))))
-  
+  ;; the return `(& duckdb_query_progress_type)` cause Warning in compile: possible incorrect argument count in call (f con)
+  ;; changed to `(* duckdb_query_progress_type)`
   (define duckdb-query-progress
-    (let ([f (foreign-procedure "duckdb_query_progress" ((& duckdb_connection)) (& duckdb_query_progress_type))])
+    (let ([f (foreign-procedure "duckdb_query_progress" ((& duckdb_connection)) (* duckdb_query_progress_type))])
       (lambda (con) (f con))))
-  
   
   (define duckdb-disconnect
     (let ([f (foreign-procedure "duckdb_disconnect" ((* duckdb_connection)) int)])
@@ -565,4 +577,5 @@
     (let ([f (foreign-procedure "duckdb_fetch_chunk" ((& duckdb_result)) (* duckdb_data_chunk))])
       (lambda (res) (f res))))
 
+  (printf "loading duckdb ~s\n\n" (duckdb-library-version))
   )
