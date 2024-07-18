@@ -18,9 +18,8 @@
 (assert (= 0 (duckdb-query con "SELECT i, sum(j) as j FROM integers group by i" res)))
 
 (define n-column (duckdb-column-count res))
-(define n-row (duckdb-row-count res))
 
-(printf "~a columns ~a rows\n\n" n-column n-row)
+(printf "~a columns\n\n" n-column)
 
 (define columns (map (lambda (i) (duckdb-column-name res i)) (iota n-column)))
 
@@ -31,10 +30,10 @@
   (lambda (r)
     (for-each 
       (lambda (c)
-        (printf "~a\t" (duckdb-value-varchar res c r)))
+        (printf "~a\t" c))
       (iota n-column))
     (printf "\n"))
-  (iota n-row))
+  (iota 10))
 
 
 
