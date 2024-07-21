@@ -108,6 +108,7 @@ DUCKDB_API duckdb_value duckdb_create_list_value(duckdb_logical_type type, duckd
 DUCKDB_API duckdb_value duckdb_create_array_value(duckdb_logical_type type, duckdb_value *values, idx_t value_count);
 DUCKDB_API char *duckdb_get_varchar(duckdb_value value);
 DUCKDB_API int64_t duckdb_get_int64(duckdb_value value);
+
 DUCKDB_API duckdb_logical_type duckdb_create_logical_type(duckdb_type type);
 DUCKDB_API char *duckdb_logical_type_get_alias(duckdb_logical_type type);
 DUCKDB_API duckdb_logical_type duckdb_create_list_type(duckdb_logical_type type);
@@ -136,6 +137,7 @@ DUCKDB_API idx_t duckdb_union_type_member_count(duckdb_logical_type type);
 DUCKDB_API char *duckdb_union_type_member_name(duckdb_logical_type type, idx_t index);
 DUCKDB_API duckdb_logical_type duckdb_union_type_member_type(duckdb_logical_type type, idx_t index);
 DUCKDB_API void duckdb_destroy_logical_type(duckdb_logical_type *type);
+
 DUCKDB_API duckdb_data_chunk duckdb_create_data_chunk(duckdb_logical_type *types, idx_t column_count);
 DUCKDB_API void duckdb_destroy_data_chunk(duckdb_data_chunk *chunk);
 DUCKDB_API void duckdb_data_chunk_reset(duckdb_data_chunk chunk);
@@ -143,6 +145,7 @@ DUCKDB_API idx_t duckdb_data_chunk_get_column_count(duckdb_data_chunk chunk);
 DUCKDB_API duckdb_vector duckdb_data_chunk_get_vector(duckdb_data_chunk chunk, idx_t col_idx);
 DUCKDB_API idx_t duckdb_data_chunk_get_size(duckdb_data_chunk chunk);
 DUCKDB_API void duckdb_data_chunk_set_size(duckdb_data_chunk chunk, idx_t size);
+
 DUCKDB_API duckdb_logical_type duckdb_vector_get_column_type(duckdb_vector vector);
 DUCKDB_API void *duckdb_vector_get_data(duckdb_vector vector);
 DUCKDB_API uint64_t *duckdb_vector_get_validity(duckdb_vector vector);
@@ -155,10 +158,12 @@ DUCKDB_API duckdb_state duckdb_list_vector_set_size(duckdb_vector vector, idx_t 
 DUCKDB_API duckdb_state duckdb_list_vector_reserve(duckdb_vector vector, idx_t required_capacity);
 DUCKDB_API duckdb_vector duckdb_struct_vector_get_child(duckdb_vector vector, idx_t index);
 DUCKDB_API duckdb_vector duckdb_array_vector_get_child(duckdb_vector vector);
+
 DUCKDB_API bool duckdb_validity_row_is_valid(uint64_t *validity, idx_t row);
 DUCKDB_API void duckdb_validity_set_row_validity(uint64_t *validity, idx_t row, bool valid);
 DUCKDB_API void duckdb_validity_set_row_invalid(uint64_t *validity, idx_t row);
 DUCKDB_API void duckdb_validity_set_row_valid(uint64_t *validity, idx_t row);
+
 DUCKDB_API duckdb_table_function duckdb_create_table_function();
 DUCKDB_API void duckdb_destroy_table_function(duckdb_table_function *table_function);
 DUCKDB_API void duckdb_table_function_set_name(duckdb_table_function table_function, const char *name);
@@ -171,6 +176,7 @@ DUCKDB_API void duckdb_table_function_set_local_init(duckdb_table_function table
 DUCKDB_API void duckdb_table_function_set_function(duckdb_table_function table_function, duckdb_table_function_t function);
 DUCKDB_API void duckdb_table_function_supports_projection_pushdown(duckdb_table_function table_function, bool pushdown);
 DUCKDB_API duckdb_state duckdb_register_table_function(duckdb_connection con, duckdb_table_function function);
+
 DUCKDB_API void *duckdb_bind_get_extra_info(duckdb_bind_info info);
 DUCKDB_API void duckdb_bind_add_result_column(duckdb_bind_info info, const char *name, duckdb_logical_type type);
 DUCKDB_API idx_t duckdb_bind_get_parameter_count(duckdb_bind_info info);
@@ -179,6 +185,7 @@ DUCKDB_API duckdb_value duckdb_bind_get_named_parameter(duckdb_bind_info info, c
 DUCKDB_API void duckdb_bind_set_bind_data(duckdb_bind_info info, void *bind_data, duckdb_delete_callback_t destroy);
 DUCKDB_API void duckdb_bind_set_cardinality(duckdb_bind_info info, idx_t cardinality, bool is_exact);
 DUCKDB_API void duckdb_bind_set_error(duckdb_bind_info info, const char *error);
+
 DUCKDB_API void *duckdb_init_get_extra_info(duckdb_init_info info);
 DUCKDB_API void *duckdb_init_get_bind_data(duckdb_init_info info);
 DUCKDB_API void duckdb_init_set_init_data(duckdb_init_info info, void *init_data, duckdb_delete_callback_t destroy);
@@ -186,15 +193,18 @@ DUCKDB_API idx_t duckdb_init_get_column_count(duckdb_init_info info);
 DUCKDB_API idx_t duckdb_init_get_column_index(duckdb_init_info info, idx_t column_index);
 DUCKDB_API void duckdb_init_set_max_threads(duckdb_init_info info, idx_t max_threads);
 DUCKDB_API void duckdb_init_set_error(duckdb_init_info info, const char *error);
+
 DUCKDB_API void *duckdb_function_get_extra_info(duckdb_function_info info);
 DUCKDB_API void *duckdb_function_get_bind_data(duckdb_function_info info);
 DUCKDB_API void *duckdb_function_get_init_data(duckdb_function_info info);
 DUCKDB_API void *duckdb_function_get_local_init_data(duckdb_function_info info);
 DUCKDB_API void duckdb_function_set_error(duckdb_function_info info, const char *error);
+
 DUCKDB_API void duckdb_add_replacement_scan(duckdb_database db, duckdb_replacement_callback_t replacement, void *extra_data, duckdb_delete_callback_t delete_callback);
 DUCKDB_API void duckdb_replacement_scan_set_function_name(duckdb_replacement_scan_info info, const char *function_name);
 DUCKDB_API void duckdb_replacement_scan_add_parameter(duckdb_replacement_scan_info info, duckdb_value parameter);
 DUCKDB_API void duckdb_replacement_scan_set_error(duckdb_replacement_scan_info info, const char *error);
+
 DUCKDB_API duckdb_state duckdb_appender_create(duckdb_connection connection, const char *schema, const char *table, duckdb_appender *out_appender);
 DUCKDB_API idx_t duckdb_appender_column_count(duckdb_appender appender);
 DUCKDB_API duckdb_logical_type duckdb_appender_column_type(duckdb_appender appender, idx_t col_idx);
@@ -226,6 +236,7 @@ DUCKDB_API duckdb_state duckdb_append_varchar_length(duckdb_appender appender, c
 DUCKDB_API duckdb_state duckdb_append_blob(duckdb_appender appender, const void *data, idx_t length);
 DUCKDB_API duckdb_state duckdb_append_null(duckdb_appender appender);
 DUCKDB_API duckdb_state duckdb_append_data_chunk(duckdb_appender appender, duckdb_data_chunk chunk);
+
 DUCKDB_API void duckdb_execute_tasks(duckdb_database database, idx_t max_tasks);
 DUCKDB_API duckdb_task_state duckdb_create_task_state(duckdb_database database);
 DUCKDB_API void duckdb_execute_tasks_state(duckdb_task_state state);
@@ -234,4 +245,5 @@ DUCKDB_API void duckdb_finish_execution(duckdb_task_state state);
 DUCKDB_API bool duckdb_task_state_is_finished(duckdb_task_state state);
 DUCKDB_API void duckdb_destroy_task_state(duckdb_task_state state);
 DUCKDB_API bool duckdb_execution_is_finished(duckdb_connection con);
+
 DUCKDB_API duckdb_data_chunk duckdb_fetch_chunk(duckdb_result result);

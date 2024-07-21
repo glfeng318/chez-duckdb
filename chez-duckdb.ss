@@ -82,17 +82,258 @@
     duckdb_database
     duckdb_connection
 
+    ;; procedure
     duckdb-open
-    duckdb-connect
+    duckdb-open-ext
     duckdb-close
+    duckdb-connect
+    duckdb-interrupt
+    duckdb-query-progress
     duckdb-disconnect
     duckdb-library-version
+
+    duckdb-create-config
+    duckdb-config-count
+    duckdb-get-config-flag
+    duckdb-set-config
+    duckdb-destroy-config
 
     duckdb-query
     duckdb-destroy-result
     duckdb-column-name
+    duckdb-column-type
+    duckdb-result-statement-type
+    duckdb-column-logical-type
     duckdb-column-count
-    ;;
+    duckdb-rows-changed
+    duckdb-result-error
+
+    duckdb-result-return-type
+
+    duckdb-malloc
+    duckdb-free
+    duckdb-vector-size
+    duckdb-string-is-inlined
+
+    duckdb-from-date
+    duckdb-to-date
+    duckdb-is-finite-date
+    duckdb-from-time
+    duckdb-create-time-tz
+    duckdb-from-time-tz
+    duckdb-to-time
+    duckdb-from-timestamp
+    duckdb-to-timestamp
+    duckdb-is-finite-timestamp
+
+    duckdb-hugeint-to-double
+    duckdb-double-to-hugeint
+
+    duckdb-uhugeint-to-double
+    duckdb-double-to-uhugeint
+
+    duckdb-double-to-decimal
+    duckdb-decimal-to-double
+
+    duckdb-prepare
+    duckdb-destroy-prepare
+    duckdb-prepare-error
+    duckdb-nparams
+    duckdb-parameter-name
+    duckdb-param-type
+    duckdb-clear-bindings
+    duckdb-prepared-statement-type
+
+    duckdb-bind-value
+    duckdb-bind-parameter-index
+    duckdb-bind-boolean
+    duckdb-bind-int8
+    duckdb-bind-int16
+    duckdb-bind-int32
+    duckdb-bind-int64
+    duckdb-bind-hugeint
+    duckdb-bind-uhugeint
+    duckdb-bind-decimal
+    duckdb-bind-uint8
+    duckdb-bind-uint16
+    duckdb-bind-uint32
+    duckdb-bind-uint64
+    duckdb-bind-float
+    duckdb-bind-double
+    duckdb-bind-date
+    duckdb-bind-time
+    duckdb-bind-timestamp
+    duckdb-bind-interval
+    duckdb-bind-varchar
+    duckdb-bind-varchar-length
+    duckdb-bind-blob
+    duckdb-bind-null
+
+    duckdb-execute-prepared
+
+    duckdb-extract-statements
+    duckdb-prepare-extracted-statement
+    duckdb-extract-statements-error
+    duckdb-destroy-extracted
+
+    duckdb-pending-prepared
+    duckdb-destroy-pending
+    duckdb-pending-error
+    duckdb-pending-execute-task
+    duckdb-pending-execute-check-state
+    duckdb-execute-pending
+    duckdb-pending-execution-is-finished
+
+    duckdb-destroy-value
+    duckdb-create-varchar
+    duckdb-create-varchar-length
+    duckdb-create-int64
+    duckdb-create-struct-value
+    duckdb-create-list-value
+    duckdb-create-array-value
+    duckdb-get-varchar
+    duckdb-get-int64
+
+    duckdb-create-logical-type
+    duckdb-logical-type-get-alias
+    duckdb-create-list-type
+    duckdb-create-array-type
+    duckdb-create-map-type
+    duckdb-create-union-type
+    duckdb-create-struct-type
+    duckdb-create-enum-type
+    duckdb-create-decimal-type
+    duckdb-get-type-id
+    duckdb-decimal-width
+    duckdb-decimal-scale
+    duckdb-decimal-internal-type
+    duckdb-enum-internal-type
+    duckdb-enum-dictionary-size
+    duckdb-enum-dictionary-value
+    duckdb-list-type-child-type
+    duckdb-array-type-child-type
+    duckdb-array-type-array-size
+    duckdb-map-type-key-type
+    duckdb-map-type-value-type
+    duckdb-struct-type-child-count
+    duckdb-struct-type-child-name
+    duckdb-struct-type-child-type
+    duckdb-union-type-member-count
+    duckdb-union-type-member-name
+    duckdb-union-type-member-type
+    duckdb-destroy-logical-type
+
+    duckdb-create-data-chunk
+    duckdb-destroy-data-chunk
+    duckdb-data-chunk-reset
+    duckdb-data-chunk-get-column-count
+    duckdb-data-chunk-get-vector
+    duckdb-data-chunk-get-size
+    duckdb-data-chunk-set-size
+
+    duckdb-vector-get-column-type
+    duckdb-vector-get-data
+    duckdb-vector-get-validity
+    duckdb-vector-ensure-validity-writable
+    duckdb-vector-assign-string-element
+    duckdb-vector-assign-string-element-len
+    duckdb-list-vector-get-child
+    duckdb-list-vector-get-size
+    duckdb-list-vector-set-size
+    duckdb-list-vector-reserve
+    duckdb-struct-vector-get-child
+    duckdb-array-vector-get-child
+
+    duckdb-validity-row-is-valid
+    duckdb-validity-set-row-validity
+    duckdb-validity-set-row-invalid
+    duckdb-validity-set-row-valid
+
+    duckdb-create-table-function
+    duckdb-destroy-table-function
+    duckdb-table-function-set-name
+    duckdb-table-function-add-parameter
+    duckdb-table-function-add-named-parameter
+    duckdb-table-function-set-extra-info
+    duckdb-table-function-set-bind
+    duckdb-table-function-set-init
+    duckdb-table-function-set-local-init
+    duckdb-table-function-set-function
+    duckdb-table-function-supports-projection-pushdown
+    duckdb-register-table-function
+
+    duckdb-bind-get-extra-info
+    duckdb-bind-add-result-column
+    duckdb-bind-get-parameter-count
+    duckdb-bind-get-parameter
+    duckdb-bind-get-named-parameter
+    duckdb-bind-set-bind-data
+    duckdb-bind-set-cardinality
+    duckdb-bind-set-error
+
+    duckdb-init-get-extra-info
+    duckdb-init-get-bind-data
+    duckdb-init-set-init-data
+    duckdb-init-get-column-count
+    duckdb-init-get-column-index
+    duckdb-init-set-max-threads
+    duckdb-init-set-error
+
+    duckdb-function-get-extra-info
+    duckdb-function-get-bind-data
+    duckdb-function-get-init-data
+    duckdb-function-get-local-init-data
+    duckdb-function-set-error
+
+    duckdb-add-replacement-scan
+    duckdb-replacement-scan-set-function-name
+    duckdb-replacement-scan-add-parameter
+    duckdb-replacement-scan-set-error
+
+    duckdb-appender-create
+    duckdb-appender-column-count
+    duckdb-appender-column-type
+    duckdb-appender-error
+    duckdb-appender-flush
+    duckdb-appender-close
+    duckdb-appender-destroy
+    duckdb-appender-begin-row
+    duckdb-appender-end-row
+    duckdb-append-bool
+    duckdb-append-int8
+    duckdb-append-int16
+    duckdb-append-int32
+    duckdb-append-int64
+    duckdb-append-hugeint
+    duckdb-append-uint8
+    duckdb-append-uint16
+    duckdb-append-uint32
+    duckdb-append-uint64
+    duckdb-append-uhugeint
+    duckdb-append-float
+    duckdb-append-double
+    duckdb-append-date
+    duckdb-append-time
+    duckdb-append-timestamp
+    duckdb-append-interval
+    duckdb-append-varchar
+    duckdb-append-varchar-length
+    duckdb-append-blob
+    duckdb-append-null
+    duckdb-append-data-chunk
+
+    duckdb-execute-tasks
+    duckdb-create-task-state
+    duckdb-execute-tasks-state
+    duckdb-execute-n-tasks-state
+    duckdb-finish-execution
+    duckdb-task-state-is-finished
+    duckdb-destroy-task-state
+    duckdb-execution-is-finished
+
+    duckdb-fetch-chunk
+
+    ;; helper
     make-ftype-null
     define-callback
     define-fn
@@ -613,48 +854,48 @@
   (define duckdb-pending-prepared 
     (let ([f (foreign-procedure "duckdb_pending_prepared" ((& duckdb_prepared_statement) (* duckdb_pending_result)) unsigned-int)])
       (lambda (ps res) (f ps res))))
-  (define duckdb_destroy_pending 
+  (define duckdb-destroy-pending 
     (let ([f (foreign-procedure "duckdb_destroy_pending" ((* duckdb_pending_result)) void)])
       (lambda (res) (f res))))
-  (define duckdb_pending_error 
+  (define duckdb-pending-error 
     (let ([f (foreign-procedure "duckdb_pending_error" ((& duckdb_pending_result)) string)])
       (lambda (res) (f res))))
-  (define duckdb_pending_execute_task 
+  (define duckdb-pending-execute-task 
     (let ([f (foreign-procedure "duckdb_pending_execute_task" ((& duckdb_pending_result)) unsigned-int)])
       (lambda (res) (f res))))
-  (define duckdb_pending_execute_check_state 
+  (define duckdb-pending-execute-check-state 
     (let ([f (foreign-procedure "duckdb_pending_execute_check_state" ((& duckdb_pending_result)) unsigned-int)])
       (lambda (res) (f res))))
-  (define duckdb_execute_pending 
+  (define duckdb-execute-pending 
     (let ([f (foreign-procedure "duckdb_execute_pending" ((& duckdb_pending_result) (* duckdb_result)) unsigned-int)])
       (lambda (pending-result out-result) (f pending-result out-result))))
-  (define duckdb_pending_execution_is_finished 
+  (define duckdb-pending-execution-is-finished 
     (let ([f (foreign-procedure "duckdb_pending_execution_is_finished" (unsigned-int) boolean)])
       (lambda (pending-state) (f pending-state))))
 
   ;; value interface
-  (define duckdb_destroy_value
+  (define duckdb-destroy-value
     (let ([f (foreign-procedure "duckdb_destroy_value" ((* duckdb_value)) void)])
       (lambda (value) (f value))))
-  (define duckdb_create_varchar
+  (define duckdb-create-varchar
     (let ([f (foreign-procedure "duckdb_create_varchar" (string) (* duckdb_value))])
       (lambda (value) (f value))))
-  (define duckdb_create_varchar_length
+  (define duckdb-create-varchar-length
     (let ([f (foreign-procedure "duckdb_create_varchar_length" (string unsigned-64) (* duckdb_value))])
       (lambda (text length) (f text length))))
-  (define duckdb_create_int64
+  (define duckdb-create-int64
     (let ([f (foreign-procedure "duckdb_create_int64" (integer-64) (* duckdb_value))])
       (lambda (value) (f value))))
-  (define duckdb_create_struct_value
+  (define duckdb-create-struct-value
     (let ([f (foreign-procedure "duckdb_create_struct_value" ((& duckdb_logical_type) (* duckdb_value)) (* duckdb_value))])
       (lambda (type values) (f type values))))
-  (define duckdb_create_list_value
+  (define duckdb-create-list-value
     (let ([f (foreign-procedure "duckdb_create_list_value" ((& duckdb_logical_type) (* duckdb_value) unsigned-64) (* duckdb_value))])
       (lambda (type values value-count) (f type values value-count))))
-  (define duckdb_create_array_value
+  (define duckdb-create-array-value
     (let ([f (foreign-procedure "duckdb_create_array_value" ((& duckdb_logical_type) (* duckdb_value) unsigned-64) (* duckdb_value))])
       (lambda (type values value-count) (f type values value-count))))
-  (define duckdb_get_varchar
+  (define duckdb-get-varchar
     (let ([f (foreign-procedure "duckdb_get_varchar" ((& duckdb_value)) string)])
       (lambda (value) (f value))))
   (define duckdb-get-int64
@@ -673,19 +914,19 @@
      (lambda (type) (f type)))) 
   (define duckdb-create-array-type
     (let ([f (foreign-procedure "duckdb_create_array_type" ((& duckdb_logical_type) unsigned-64) (* duckdb_logical_type))])
-      (lambda (type array_size) (f type array_size)))) 
+      (lambda (type array-size) (f type array-size)))) 
   (define duckdb-create-map-type
     (let ([f (foreign-procedure "duckdb_create_map_type" ((& duckdb_logical_type) (& duckdb_logical_type)) (* duckdb_logical_type))])
-      (lambda (key_type value_type) (f key_type value_type)))) 
+      (lambda (key-type value-type) (f key-type value-type)))) 
   (define duckdb-create-union-type
     (let ([f (foreign-procedure "duckdb_create_union_type" ((* duckdb_logical_type) void* unsigned-64) (* duckdb_logical_type))])
-      (lambda (member_types member_names member_count) (f member_types member_names member_count)))) 
+      (lambda (member-types member-names member-count) (f member-types member-names member-count)))) 
   (define duckdb-create-struct-type
     (let ([f (foreign-procedure "duckdb_create_struct_type" ((* duckdb_logical_type) void* unsigned-64) (* duckdb_logical_type))])
-      (lambda (member_types member_names member_count) (f member_types member_names member_count)))) 
+      (lambda (member-types member-names member-count) (f member-types member-names member-count)))) 
   (define duckdb-create-enum-type
     (let ([f (foreign-procedure "duckdb_create_enum_type" (void* unsigned-64) (* duckdb_logical_type))])
-      (lambda (member_names member_count) (f member_names member_count)))) 
+      (lambda (member-names member-count) (f member-names member-count)))) 
   (define duckdb-create-decimal-type
     (let ([f (foreign-procedure "duckdb_create_decimal_type" (unsigned-8 unsigned-8) (* duckdb_logical_type))])
       (lambda (width scale) (f width scale)))) 
@@ -703,7 +944,10 @@
       (lambda (type) (f type)))) 
   (define duckdb-enum-internal-type
     (let ([f (foreign-procedure "duckdb_enum_internal_type" ((& duckdb_logical_type)) unsigned-int)])
-      (lambda (type) (f type)))) 
+      (lambda (type) (f type))))
+  (define duckdb-enum-dictionary-size
+    (let ([f (foreign-procedure "duckdb_enum_dictionary_size" ((& duckdb_logical_type)) string)])
+      (lambda (type) (f type))))
   (define duckdb-enum-dictionary-value
     (let ([f (foreign-procedure "duckdb_enum_dictionary_value" ((& duckdb_logical_type)  unsigned-64) string)])
       (lambda (type index) (f type index)))) 
@@ -747,7 +991,7 @@
   ;; data chunk interface
   (define duckdb-create-data-chunk
     (let ([f (foreign-procedure "duckdb_create_data_chunk" ((* duckdb_logical_type) unsigned-64) (* duckdb_data_chunk))])
-      (lambda (types column_count) (f types column_count))))
+      (lambda (types column-count) (f types column-count))))
   (define duckdb-destroy-data-chunk
     (let ([f (foreign-procedure "duckdb_destroy_data_chunk" ((* duckdb_data_chunk)) void)])
       (lambda (chunk) (f chunk))))
@@ -819,6 +1063,108 @@
     (let ([f (foreign-procedure "duckdb_validity_set_row_valid" (unsigned-64 unsigned-64) void)])
       (lambda (validity row) (f validity row))))
 
+  ;; table functions
+  (define duckdb-create-table-function
+    (let ([f (foreign-procedure "duckdb_create_table_function" () (* duckdb_table_function))])
+      (lambda () (f))))
+  (define duckdb-destroy-table-function
+    (let ([f (foreign-procedure "duckdb_destroy_table_function" ((* duckdb_table_function)) void)])
+    (lambda (table-function) (f table-function))))
+  (define duckdb-table-function-set-name
+    (let ([f (foreign-procedure "duckdb_table_function_set_name" ((& duckdb_table_function) string)void)])
+      (lambda  (table-function name) (f table-function name))))
+  (define duckdb-table-function-add-parameter
+    (let ([f (foreign-procedure "duckdb_table_function_add_parameter" ((& duckdb_table_function) (& duckdb_logical_type))void)])
+      (lambda (table-function type) (f table-function type))))
+  (define duckdb-table-function-add-named-parameter
+    (let ([f (foreign-procedure "duckdb_table_function_add_named_parameter" ((& duckdb_table_function) string (& duckdb_logical_type))void)])
+      (lambda (table-function name type) (f table-function name type))))
+  (define duckdb-table-function-set-extra-info
+    (let ([f (foreign-procedure "duckdb_table_function_set_extra_info" ((& duckdb_table_function) void* void*)void)])
+      (lambda (table-function extra_info destroy) (f table-function extra_info destroy))))
+  (define duckdb-table-function-set-bind
+    (let ([f (foreign-procedure "duckdb_table_function_set_bind" ((& duckdb_table_function) void*)void)])
+      (lambda (table-function bind) (f table-function bind))))
+  (define duckdb-table-function-set-init
+    (let ([f (foreign-procedure "duckdb_table_function_set_init" ((& duckdb_table_function) void*)void)])
+      (lambda (table-function init) (f table-function init))))
+  (define duckdb-table-function-set-local-init
+    (let ([f (foreign-procedure "duckdb_table_function_set_local_init" ((& duckdb_table_function) void*)void)])
+      (lambda (table-function init) (f table-function init))))
+  (define duckdb-table-function-set-function
+    (let ([f (foreign-procedure "duckdb_table_function_set_function" ((& duckdb_table_function) void*)void)])
+      (lambda (table-function function) (f table-function function))))
+  (define duckdb-table-function-supports-projection-pushdown
+    (let ([f (foreign-procedure "duckdb_table_function_supports_projection_pushdown" ((& duckdb_table_function) boolean)void)])
+      (lambda (table-function pushdown) (f table-function pushdown))))
+  (define duckdb-register-table-function
+    (let ([f (foreign-procedure "duckdb_register_table_function" ((& duckdb_connection) (& duckdb_table_function)) unsigned-int)])
+      (lambda (con function) (f con function))))
+  ;; table function bind 
+  (define duckdb-bind-get-extra-info
+    (let ([f (foreign-procedure "duckdb_bind_get_extra_info" ((& duckdb_bind_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-bind-add-result-column
+    (let ([f (foreign-procedure "duckdb_bind_add_result_column" ((& duckdb_bind_info) string (& duckdb_logical_type)) void)])
+      (lambda (info name type) (f info name type))))
+  (define duckdb-bind-get-parameter-count
+    (let ([f (foreign-procedure "duckdb_bind_get_parameter_count" ((& duckdb_bind_info)) unsigned-64)])
+      (lambda (info) (f info))))
+  (define duckdb-bind-get-parameter
+    (let ([f (foreign-procedure "duckdb_bind_get_parameter" ((& duckdb_bind_info)) (& duckdb_value))])
+      (lambda (info index) (f info index))))
+  (define duckdb-bind-get-named-parameter
+    (let ([f (foreign-procedure "duckdb_bind_get_named_parameter" ((& duckdb_bind_info) string) (* duckdb_value))])
+      (lambda (info name) (f info name))))
+  (define duckdb-bind-set-bind-data
+    (let ([f (foreign-procedure "duckdb_bind_set_bind_data" ((& duckdb_bind_info) void* void*) void)])
+      (lambda (info bind-data destroy) (f info bind-data destroy))))
+  (define duckdb-bind-set-cardinality
+    (let ([f (foreign-procedure "duckdb_bind_set_cardinality" ((& duckdb_bind_info) void* void*) void)])
+      (lambda (info cardinality is-exact) (f info cardinality is-exact))))
+  (define duckdb-bind-set-error
+    (let ([f (foreign-procedure "duckdb_bind_set_error" ((& duckdb_bind_info) string) void)])
+      (lambda (info error) (f info error))))
+  
+  ;; table function init
+  (define duckdb-init-get-extra-info
+    (let ([f (foreign-procedure "duckdb_init_get_extra_info" ((& duckdb_bind_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-init-get-bind-data
+    (let ([f (foreign-procedure "duckdb_init_get_bind_data" ((& duckdb_bind_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-init-set-init-data
+    (let ([f (foreign-procedure "duckdb_init_set_init_data" ((& duckdb_bind_info) void* void*) void)])
+      (lambda (info init-data destroy) (f info init-data destroy))))
+  (define duckdb-init-get-column-count
+    (let ([f (foreign-procedure "duckdb_init_get_column_count" ((& duckdb_bind_info)) unsigned-64)])
+      (lambda (info) (f info))))
+  (define duckdb-init-get-column-index
+    (let ([f (foreign-procedure "duckdb_init_get_column_index" ((& duckdb_bind_info) unsigned-64) unsigned-64)])
+      (lambda (info column-index) (f info column-index))))
+  (define duckdb-init-set-max-threads
+    (let ([f (foreign-procedure "duckdb_init_set_max_threads" ((& duckdb_bind_info) unsigned-64) void)])
+      (lambda (info max-threads) (f info max-threads))))
+  (define duckdb-init-set-error
+    (let ([f (foreign-procedure "duckdb_init_set_error" ((& duckdb_bind_info) string) void)])
+      (lambda (info error) (f info error))))
+
+  ;; table function
+  (define duckdb-function-get-extra-info
+    (let ([f (foreign-procedure "duckdb_function_get_extra_info" ((& duckdb_function_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-function-get-bind-data
+    (let ([f (foreign-procedure "duckdb_function_get_bind_data" ((& duckdb_function_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-function-get-init-data
+    (let ([f (foreign-procedure "duckdb_function_get_init_data" ((& duckdb_function_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-function-get-local-init-data
+    (let ([f (foreign-procedure "duckdb_function_get_local_init_data" ((& duckdb_function_info)) void*)])
+      (lambda (info) (f info))))
+  (define duckdb-function-set-error
+    (let ([f (foreign-procedure "duckdb_init_set_error" ((& duckdb_function_info) string) void)])
+      (lambda (info error) (f info error))))
 
   ;; Replacement Scans
   (define duckdb-add-replacement-scan
@@ -954,7 +1300,7 @@
   (define duckdb-destroy-task-state
     (let ([f (foreign-procedure "duckdb_destroy_task_state" ((& duckdb_task_state)) void)])
       (lambda (state) (f state))))
-  (define duckdb_execution_is_finished
+  (define duckdb-execution-is-finished
     (let ([f (foreign-procedure "duckdb_execution_is_finished" ((& duckdb_connection)) void)])
       (lambda (con) (f con))))
   
@@ -963,5 +1309,5 @@
     (let ([f (foreign-procedure "duckdb_fetch_chunk" ((& duckdb_result)) (* duckdb_data_chunk))])
       (lambda (res) (f res))))
 
-  (printf "loading duckdb ~s\n\n" (duckdb-library-version))
+  (printf "loading duckdb ~a\n\n" (duckdb-library-version))
   )
