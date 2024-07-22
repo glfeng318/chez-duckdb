@@ -78,9 +78,41 @@
     DUCKDB_STATEMENT_TYPE_DETACH
     DUCKDB_STATEMENT_TYPE_MULTI
 
+    duckdb_task_state
+    duckdb_date
+    duckdb_date_struct
+    duckdb_time
+    duckdb_time_struct
+    duckdb_time_tz
+    duckdb_time_tz_struct
+    duckdb_timestamp
+    duckdb_timestamp_struct
+    duckdb_interval
+    duckdb_hugeint
+    duckdb_uhugeint
+    duckdb_decimal
+    duckdb_query_progress_type
+    duckdb_string_t
+    duckdb_list_entry
+    duckdb_column
+    duckdb_vector
+    duckdb_string
+    duckdb_blob
     duckdb_result
     duckdb_database
     duckdb_connection
+    duckdb_prepared_statement
+    duckdb_extracted_statements
+    duckdb_pending_result
+    duckdb_appender
+    duckdb_config
+    duckdb_logical_type
+    duckdb_data_chunk
+    duckdb_value
+    duckdb_table_function
+    duckdb_bind_info
+    duckdb_init_info
+    duckdb_function_info
 
     ;; procedure
     duckdb-open
